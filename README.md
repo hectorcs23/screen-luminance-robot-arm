@@ -19,7 +19,7 @@ E \approx L\,\Omega \quad \Longrightarrow \quad L \approx \frac{E}{\Omega}
 with, for a circular aperture of radius $a$ seen from a distance $d$ on its axis,
 
 ```math
-\Omega = 2\pi\left(1 - \frac{d}{\sqrt{d^2+a^2}}\right) \;\xrightarrow[a \ll d]{}\; \frac{\pi a^2}{d^2}
+\Omega = 2\pi\left(1 - \frac{d}{\sqrt{d^2+a^2}}\right) \quad\xrightarrow{a \ll d}\quad \frac{\pi a^2}{d^2}
 ```
 
 So the instrument has to do three things: put the sensor at a **known, repeatable** point in front of the screen, read illuminance there, and convert. The repeatability is what the arm buys — a hand-held sensor changes distance and angle between readings, and both feed straight into Ω.
@@ -76,7 +76,7 @@ Two sources were measured over a 0 → 100 → 0 % brightness sweep, with the se
 
 ![Screen response, hysteresis, and agreement with the reference luxmeter](docs/img/characterization.png)
 
-**1. The screen is strongly non-linear, but the exponent is not pinned down.** A straight line explains only R² = 0.758 of the response; a power law $L = L_0 + k\,B^{\gamma}$ reaches 0.996. The exponent, though, depends entirely on how the offset is handled:
+**1. The screen is strongly non-linear, but the exponent is not pinned down.** A straight line explains only R² = 0.758 of the response; a power law $L = L_0 + k B^{\gamma}$ reaches 0.996. The exponent, though, depends entirely on how the offset is handled:
 
 | Estimate | γ | R² |
 |---|---|---|
