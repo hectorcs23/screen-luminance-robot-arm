@@ -82,8 +82,6 @@ The second tab sweeps the planned path and plots both joint angles against the s
 
 Two sources were measured over a 0 → 100 → 0 % brightness sweep, with the sensor fixed: a **computer screen** (the device under test) and a **blue LED** driven by PWM (a source known to be near-linear, used as a control). A calibrated luxmeter measured the same sweeps as the reference.
 
-![Screen response, hysteresis, and agreement with the reference luxmeter](docs/img/characterization.png)
-
 **1. The screen is strongly non-linear, but the exponent is not pinned down.** A straight line explains only R² = 0.758 of the response; a power law $L = L_0 + k B^{\gamma}$ reaches 0.996. The exponent, though, depends entirely on how the offset is handled:
 
 | Estimate | γ | R² |
@@ -98,8 +96,6 @@ All of these describe the same eleven points. Over a single decade of brightness
 **2. The sensor's error is a gain error, not a shape error.** This is the result that was not in the original report. Plotting the VEML7700 against the reference luxmeter over the same sweep, the log-log slope is **1.015** — indistinguishable from 1, meaning the sensor tracks the reference proportionally — with a constant factor of **1.53** and only 2.7 % spread across ten brightness levels. Divide by that single number and the sensor agrees with the reference to a **mean 2.3 %, worst case 6.2 %**. In other words the sensor's headline ~50 % error is one calibration constant away from being a 2 % instrument; it does not need a non-linear correction.
 
 **3. Hysteresis and repeatability.** Up and down sweeps separate by at most 3.3 % of full scale (1.3 % on average) on the screen, and 1.5 % on the LED. Repeatability across the levels above the noise floor is 7.3 % CV on the screen — the screen itself drifts — against 0.5 % on the LED.
-
-![The LED reference: linear to R² = 0.9995](docs/img/led_reference.png)
 
 **4. The raw capture has three bad samples, and they matter.** Three readings out of 660 report 346,033.875 lux — the library's overflow value — while their raw ALS counts are 9, 46 and 73, i.e. perfectly ordinary. Each is the *first* sample of a burst. Left in, they move the mean of the 40 % level from 2.8 lux to 5,770 lux. They are listed in [`results/discarded_samples.csv`](results) and excluded from everything above. Anyone re-running the original script on the published capture without filtering them will get different numbers than the report's.
 
