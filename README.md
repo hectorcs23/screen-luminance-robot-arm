@@ -39,11 +39,19 @@ So the instrument has to do three things: put the sensor at a **known, repeatabl
 
 Two electrical decisions carried the build. **The servos get their own battery**, because their inrush current on the shared 5 V rail was resetting the board and corrupting the LCD. And **the WiFi radio was cut from the final firmware** for the same reason: the ESP32's transmit spike browned out the rail. The app still speaks TCP — the transport layer is abstract — but the delivered build runs over USB serial at 9600 baud.
 
-![Schematic and PCB routing](docs/img/EsquemaElectricoCircuito.png)
+### The structure
+
+![CAD model of the structure: isometric and side views](docs/img/cad_structure.png)
+
+Everything mechanical was designed in CAD and printed in PLA: a cradle that clamps the display unit so the screen sits at a fixed, known position relative to the arm base, the servo towers, the two links and the electronics housing. The cradle is what makes the measurement repeatable — the kinematics assume the screen origin is exactly 12 cm from the shoulder, and that only holds if the display cannot shift between sessions. The side view was used to verify dimensions, ranges of motion and component placement before printing, and the second link is lattice-cut to save mass at the end of the arm, where the smaller SG90 carries the load. Printing let the geometry iterate quickly.
+
+### The electronics
+
+![Schematic](docs/img/EsquemaElectricoCircuito.png)
 
 The PCB is a two-layer shield that sits on the UNO R4: one layer is mostly the common ground plane, the other carries power and signals, with the I²C pull-ups on board. It was routed but **not manufactured** within the course deadline, so the prototype in the photo still runs on protoboard — the board is the proposed replacement for that wiring.
 
-![PCB routing, top layer red, bottom layer blue](docs/img/EsquemaConexionesPCB.png)
+![PCB routing (top layer red, bottom blue) and the 3D model of the shield](docs/img/pcb_layout_3d.png)
 
 ## The software
 
