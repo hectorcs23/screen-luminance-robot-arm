@@ -4,7 +4,7 @@
 
 ![The prototype and the control application](docs/img/hero.png)
 
-> Course challenge for **Carrier**, *Experimental characterization through electronic instrumentation* (Tec de Monterrey, Grupo 301, June 2026). Carrier needed an objective way to check the luminance of Transicold APX display modules under varying ambient light. **My part was the PCB design and the 3D-printed structure** — the cradle that holds the display unit and the arm links in the photo above. Full report (Spanish) in [`docs/`](docs).
+> Course challenge for **Carrier**, *Experimental characterization through electronic instrumentation* (Tec de Monterrey, Grupo 301, June 2026). Carrier needed an objective way to check the luminance of Transicold APX display modules under varying ambient light. **My contribution was integral across the system:** I designed the PCB and the 3D-printed structure (the cradle that holds the display unit and the arm links in the photo above), and co-developed the screen-to-arm coordinate transformation, the kinematics and the control code with the software lead. Full report (Spanish) in [`docs/`](docs).
 >
 > The characterization section below is a **re-analysis of the raw captures**, run from the data in [`data/`](data) by [`analysis/metrology.py`](analysis/metrology.py). It reaches some conclusions the original report did not, and disagrees with it in one place — both are noted.
 
@@ -141,4 +141,4 @@ Python · NumPy · pandas · SciPy · Matplotlib · customtkinter · pyserial ·
 
 ## Team
 
-José Feliciano Gutiérrez Rubio (software) · José Alfredo Almaguer Cruz (circuit design) · **Héctor Campbell Salas (PCB and 3D-printed structure)** · Bernardo Lugo Albor (experimental characterization)
+José Feliciano Gutiérrez Rubio (software lead) · José Alfredo Almaguer Cruz (circuit design) · **Héctor Campbell Salas (PCB, 3D-printed structure, coordinate transformation, kinematics and control code)** · Bernardo Lugo Albor (experimental characterization)
