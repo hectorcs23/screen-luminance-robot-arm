@@ -198,68 +198,62 @@ def main():
     params.to_csv(RESULTS / "metrology_parameters.csv")
 
     # ---- 4. figures -------------------------------------------------------
-    fig, ax = plt.subplots(1, 3, figsize=(15, 4.4))
     bb = np.linspace(0, 100, 300)
 
-    ax[0].errorbar(B, L, yerr=lvl["std"], fmt="o", ms=5, color="#22303f",
-                   ecolor="#9aa4b1", capsize=3, label="measured (60 samples/level)", zorder=5)
-    ax[0].plot(bb, np.polyval(lin, bb), "--", color="#d9534f",
-               label=f"linear  R²={r_squared(L, np.polyval(lin, B)):.3f}")
-    ax[0].plot(bb, np.polyval(quad, bb), "--", color="#e0a100",
-               label=f"quadratic  R²={r_squared(L, np.polyval(quad, B)):.3f}")
-    ax[0].plot(bb, power_law(bb, *p_free), "-", color="#2a6fdb", lw=2,
-               label=f"power γ={p_free[2]:.2f}  R²={r_squared(L, power_law(B, *p_free)):.3f}")
-    ax[0].set_xlabel("screen brightness setting [%]")
-    ax[0].set_ylabel("luminance [cd/m²]")
-    ax[0].set_title("The screen is strongly non-linear", loc="left", fontweight="bold", fontsize=12)
-    ax[0].legend(fontsize=8.5)
+    # screen response and the three fitted models
+    plt.figure()
+    plt.errorbar(B, L, yerr=lvl["std"], fmt="o", label="Measured (60 samples/level)")
+    plt.plot(bb, np.polyval(lin, bb),
+             label=f"Linear, R² = {r_squared(L, np.polyval(lin, B)):.3f}")
+    plt.plot(bb, np.polyval(quad, bb),
+             label=f"Quadratic, R² = {r_squared(L, np.polyval(quad, B)):.3f}")
+    plt.plot(bb, power_law(bb, *p_free),
+             label=f"Power law, γ = {p_free[2]:.2f}, R² = {r_squared(L, power_law(B, *p_free)):.3f}")
+    plt.xlabel("Screen brightness setting (%)")
+    plt.ylabel("Luminance (cd/m²)")
+    plt.title("Screen luminance vs brightness setting (VEML7700)")
+    plt.legend()
+    plt.savefig(FIGS / "characterization.png")
 
-    ax[1].plot(updown.index, updown["up"], "o-", color="#2a6fdb", label="0 % → 100 %")
-    ax[1].plot(updown.index, updown["down"], "s--", color="#d9534f", label="100 % → 0 %")
-    ax[1].set_xlabel("screen brightness setting [%]")
-    ax[1].set_ylabel("luminance [cd/m²]")
-    ax[1].set_title(f"Hysteresis: {h_max:.1f} % FS max, {h_mean:.1f} % mean",
-                    loc="left", fontweight="bold", fontsize=12)
-    ax[1].legend(fontsize=9)
+    # hysteresis between the up and down sweeps
+    plt.figure()
+    plt.plot(updown.index, updown["up"], "o-", label="0 % → 100 %")
+    plt.plot(updown.index, updown["down"], "s-", label="100 % → 0 %")
+    plt.xlabel("Screen brightness setting (%)")
+    plt.ylabel("Luminance (cd/m²)")
+    plt.title(f"Hysteresis: {h_max:.1f} % FS max, {h_mean:.1f} % FS mean")
+    plt.legend()
+    plt.savefig(FIGS / "hysteresis.png")
 
-    ax[2].loglog(r[m], v[m], "o", color="#22303f", label="measured levels")
+    # cross-calibration against the reference luxmeter
     rr = np.linspace(r[m].min(), r[m].max(), 100)
-    ax[2].loglog(rr, k_cal * rr, "-", color="#2e9e5b", lw=2,
-                 label=f"×{k_cal:.2f} (median gain)")
-    ax[2].loglog(rr, rr, ":", color="#9aa4b1", label="1:1")
-    ax[2].set_xlabel("reference luxmeter [lux]")
-    ax[2].set_ylabel("VEML7700 [lux]")
-    ax[2].set_title(f"One gain factor explains it\n(slope {log_slope:.3f}, residual "
-                    f"{np.abs(residual).mean():.1f} %)", loc="left", fontweight="bold", fontsize=12)
-    ax[2].legend(fontsize=9)
-
-    for a in ax:
-        a.spines[["top", "right"]].set_visible(False)
-        a.grid(alpha=.25)
-    fig.tight_layout()
-    fig.savefig(FIGS / "characterization.png", dpi=130)
+    plt.figure()
+    plt.loglog(r[m], v[m], "o", label="Measured levels")
+    plt.loglog(rr, k_cal * rr, label=f"Gain × {k_cal:.2f} (median)")
+    plt.loglog(rr, rr, "k--", label="1:1")
+    plt.xlabel("Reference luxmeter (lux)")
+    plt.ylabel("VEML7700 (lux)")
+    plt.title(f"VEML7700 vs luxmeter, log-log slope {log_slope:.3f}")
+    plt.legend()
+    plt.savefig(FIGS / "cross_calibration.png")
 
     # LED reference sweep: the linear control case
     led = pd.read_csv(DATA / "reference_luxmeter_led.csv")
-    fig2, ax2 = plt.subplots(figsize=(5.4, 4.2))
     up = led.iloc[:11]
     down = led.iloc[11:]
     sl, ic = np.polyfit(led["brightness_pct"], led["lux_luxmeter"], 1)
-    ax2.plot(up["brightness_pct"], up["lux_luxmeter"], "o", color="#2a6fdb", label="0 % → 100 %")
-    ax2.plot(down["brightness_pct"], down["lux_luxmeter"], "s", mfc="none", color="#d9534f",
-             label="100 % → 0 %")
-    ax2.plot(bb, ic + sl * bb, "-", color="#22303f", lw=1.2,
-             label=f"linear R²={r_squared(led['lux_luxmeter'], ic + sl*led['brightness_pct']):.4f}")
-    ax2.set_xlabel("LED PWM duty [%]")
-    ax2.set_ylabel("illuminance [lux]")
-    ax2.set_title("Reference LED source: linear", loc="left", fontweight="bold", fontsize=12)
-    ax2.legend(fontsize=9)
-    ax2.spines[["top", "right"]].set_visible(False)
-    ax2.grid(alpha=.25)
-    fig2.tight_layout()
-    fig2.savefig(FIGS / "led_reference.png", dpi=130)
+    plt.figure()
+    plt.plot(up["brightness_pct"], up["lux_luxmeter"], "o", label="0 % → 100 %")
+    plt.plot(down["brightness_pct"], down["lux_luxmeter"], "s", label="100 % → 0 %")
+    plt.plot(bb, ic + sl * bb,
+             label=f"Linear fit, R² = {r_squared(led['lux_luxmeter'], ic + sl*led['brightness_pct']):.4f}")
+    plt.xlabel("LED PWM duty (%)")
+    plt.ylabel("Illuminance (lux)")
+    plt.title("Reference LED source (luxmeter)")
+    plt.legend()
+    plt.savefig(FIGS / "led_reference.png")
 
-    print(f"\nwrote {RESULTS}/*.csv and {FIGS}/characterization.png, {FIGS}/led_reference.png")
+    print(f"\nwrote {RESULTS}/*.csv and four figures in {FIGS}/")
 
 
 if __name__ == "__main__":
